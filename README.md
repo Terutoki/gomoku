@@ -38,6 +38,14 @@
   - 图书馆 Landing Page
   - Tailwind CSS
 
+### 5. 新闻网站主页
+- **文件**: `news.html`
+- **特性**:
+  - 暗黑报纸风格设计
+  - 滚动新闻条
+  - 响应式布局
+  - Tailwind CSS
+
 ## 🚀 快速开始
 
 直接在浏览器中打开 HTML 文件：
@@ -54,6 +62,9 @@ open blog.html
 
 # 打开图书馆页面
 open library.html
+
+# 打开新闻网站主页
+open news.html
 
 # 或使用本地服务器
 python3 -m http.server 8000
@@ -73,9 +84,11 @@ python3 -m http.server 8000
 ├── index.html          # 五子棋游戏主页
 ├── game.js             # 游戏逻辑
 ├── style.css           # 游戏样式
-├── tech-company.html    # 科技公司主页
+├── tech-company.html   # 科技公司主页
 ├── blog.html           # 博客页面
 ├── library.html        # 图书馆页面
+├── news.html           # 新闻网站主页
+├── AGENTS.md           # 开发指南
 └── README.md           # 项目说明
 ```
 
