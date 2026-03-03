@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>五子棋 - 人机对战</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>五子棋</h1>
+        <div class="status" id="status">轮到黑棋落子</div>
+        <div class="board" id="board"></div>
+        <button class="btn" id="restartBtn">重新开始</button>
+        <button class="btn" id="fullscreenBtn">全屏</button>
+    </div>
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <p id="modalText"></p>
+            <button class="btn" id="modalBtn">确定</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

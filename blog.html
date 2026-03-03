@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的博客 | 思考与记录</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#18181B',
+                        secondary: '#3F3F46',
+                        cta: '#2563EB',
+                        background: '#FAFAFA',
+                        surface: '#FFFFFF',
+                    },
+                    fontFamily: {
+                        heading: ['Caveat', 'cursive'],
+                        body: ['Quicksand', 'Noto Sans SC', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                        'fade-in': 'fadeIn 0.8s ease-out forwards',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Quicksand', 'Noto Sans SC', sans-serif;
+        }
+        .font-heading {
+            font-family: 'Caveat', cursive;
+        }
+        .animate-delay-100 { animation-delay: 100ms; }
+        .animate-delay-200 { animation-delay: 200ms; }
+        .animate-delay-300 { animation-delay: 300ms; }
+        .animate-delay-400 { animation-delay: 400ms; }
+        
+        @media (prefers-reduced-motion: reduce) {
+            .animate-fade-in-up,
+            .animate-fade-in,
+            .animate-float {
+                animation: none;
+                opacity: 1;
+                transform: none;
+            }
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #18181B 0%, #2563EB 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-background text-primary antialiased">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-gray-100">
+        <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="#" class="font-heading text-2xl font-bold text-primary cursor-pointer">
+                小 Eric
+            </a>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#articles" class="text-secondary hover:text-primary transition-colors cursor-pointer">文章</a>
+                <a href="#about" class="text-secondary hover:text-primary transition-colors cursor-pointer">关于</a>
+                <a href="#newsletter" class="text-secondary hover:text-primary transition-colors cursor-pointer">订阅</a>
+                <a href="#" class="cursor-pointer">
+                    <svg class="w-5 h-5 text-secondary hover:text-primary transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+                    </svg>
+                </a>
+            </div>
+            <!-- Mobile menu button -->
+            <button class="md:hidden cursor-pointer" aria-label="菜单">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center pt-20">
+        <div class="max-w-5xl mx-auto px-6 py-20">
+            <div class="max-w-2xl">
+                <p class="text-cta font-medium mb-4 animate-fade-in opacity-0">你好，我是</p>
+                <h1 class="font-heading text-6xl md:text-7xl font-bold mb-6 animate-fade-in-up opacity-0 animate-delay-100">
+                    小 Eric
+                </h1>
+                <p class="text-xl md:text-2xl text-secondary leading-relaxed mb-8 animate-fade-in-up opacity-0 animate-delay-200">
+                    开发者 · 思考者 · 记录者<br>
+                    <span class="text-lg">在这里分享编程心得、生活思考与技术探索</span>
+                </p>
+                <div class="flex flex-wrap gap-4 animate-fade-in-up opacity-0 animate-delay-300">
+                    <a href="#articles" class="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-medium hover:bg-cta transition-colors cursor-pointer">
+                        阅读文章
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </a>
+                    <a href="#about" class="inline-flex items-center gap-2 border-2 border-primary text-primary px-6 py-3 rounded-full font-medium hover:bg-primary hover:text-white transition-colors cursor-pointer">
+                        了解更多
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Scroll indicator -->
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-float cursor-pointer">
+                <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- Articles Section -->
+    <section id="articles" class="py-20 bg-surface">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="flex items-end justify-between mb-12">
+                <div>
+                    <p class="text-cta font-medium mb-2">最新文章</p>
+                    <h2 class="font-heading text-4xl md:text-5xl font-bold">精选内容</h2>
+                </div>
+                <a href="#" class="hidden md:inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors cursor-pointer">
+                    查看归档
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Featured Article -->
+                <article class="md:col-span-2 card-hover bg-background rounded-2xl p-8 border border-gray-100 cursor-pointer group">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="px-3 py-1 bg-cta/10 text-cta text-sm font-medium rounded-full">精选</span>
+                        <span class="text-secondary text-sm">2026年2月28日</span>
+                    </div>
+                    <h3 class="font-heading text-3xl font-bold mb-3 group-hover:text-cta transition-colors">
+                        聊聊技术选择与个人成长
+                    </h3>
+                    <p class="text-secondary leading-relaxed mb-6">
+                        在技术的道路上，我们总是面临无数选择。框架、语言、工具...每一次选择都是一次成长。文章将分享我在职业发展中的技术决策思考。
+                    </p>
+                    <div class="flex items-center gap-2 text-primary font-medium cursor-pointer">
+                       阅读全文
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </article>
+                
+                <!-- Article Card 1 -->
+                <article class="card-hover bg-background rounded-2xl p-6 border border-gray-100 cursor-pointer group">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-secondary text-sm">2026年2月20日</span>
+                    </div>
+                    <h3 class="font-heading text-2xl font-bold mb-3 group-hover:text-cta transition-colors">
+                        从零开始的个人项目
+                    </h3>
+                    <p class="text-secondary leading-relaxed mb-4">
+                        分享我是如何从想法到上线，构建一个完整的个人项目的全过程。
+                    </p>
+                    <div class="flex items-center gap-2 text-sm text-secondary">
+                        <span class="px-2 py-1 bg-gray-100 rounded">编程</span>
+                        <span class="px-2 py-1 bg-gray-100 rounded">项目</span>
+                    </div>
+                </article>
+                
+                <!-- Article Card 2 -->
+                <article class="card-hover bg-background rounded-2xl p-6 border border-gray-100 cursor-pointer group">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-secondary text-sm">2026年2月15日</span>
+                    </div>
+                    <h3 class="font-heading text-2xl font-bold mb-3 group-hover:text-cta transition-colors">
+                        效率工具与工作流
+                    </h3>
+                    <p class="text-secondary leading-relaxed mb-4">
+                        盘点那些让工作效率翻倍的工具，以及如何打造适合自己的工作流。
+                    </p>
+                    <div class="flex items-center gap-2 text-sm text-secondary">
+                        <span class="px-2 py-1 bg-gray-100 rounded">效率</span>
+                        <span class="px-2 py-1 bg-gray-100 rounded">工具</span>
+                    </div>
+                </article>
+                
+                <!-- Article Card 3 -->
+                <article class="card-hover bg-background rounded-2xl p-6 border border-gray-100 cursor-pointer group">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-secondary text-sm">2026年2月8日</span>
+                    </div>
+                    <h3 class="font-heading text-2xl font-bold mb-3 group-hover:text-cta transition-colors">
+                        代码审查的艺术
+                    </h3>
+                    <p class="text-secondary leading-relaxed mb-4">
+                        如何进行有效的代码审查，让团队协作更加顺畅。
+                    </p>
+                    <div class="flex items-center gap-2 text-sm text-secondary">
+                        <span class="px-2 py-1 bg-gray-100 rounded">团队</span>
+                        <span class="px-2 py-1 bg-gray-100 rounded">最佳实践</span>
+                    </div>
+                </article>
+                
+                <!-- Article Card 4 -->
+                <article class="card-hover bg-background rounded-2xl p-6 border border-gray-100 cursor-pointer group">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-secondary text-sm">2026年2月1日</span>
+                    </div>
+                    <h3 class="font-heading text-2xl font-bold mb-3 group-hover:text-cta transition-colors">
+                        保持好奇，持续学习
+                    </h3>
+                    <p class="text-secondary leading-relaxed mb-4">
+                        在快速变化的技术世界里，如何保持竞争力并持续成长。
+                    </p>
+                    <div class="flex items-center gap-2 text-sm text-secondary">
+                        <span class="px-2 py-1 bg-gray-100 rounded">成长</span>
+                        <span class="px-2 py-1 bg-gray-100 rounded">思维</span>
+                    </div>
+                </article>
+            </div>
+            
+            <div class="mt-8 text-center md:hidden">
+                <a href="#" class="inline-flex items-center gap-2 text-cta font-medium cursor-pointer">
+                    查看更多文章
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-background">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="order-2 md:order-1">
+                    <p class="text-cta font-medium mb-2">关于我</p>
+                    <h2 class="font-heading text-4xl md:text-5xl font-bold mb-6">
+                        你好，我是小 Eric
+                    </h2>
+                    <div class="space-y-4 text-secondary leading-relaxed">
+                        <p>
+                            一名热爱技术的开发者，目前专注于 Web 开发和用户体验设计。
+                        </p>
+                        <p>
+                            我相信代码不仅仅是工具，更是创造美好事物的媒介。在业余时间，我喜欢探索新技术、阅读技术书籍，并尝试将所学应用到实际项目中。
+                        </p>
+                        <p>
+                            这个博客是我记录思考和分享知识的地方。如果你对我的文章感兴趣，欢迎关注和交流！
+                        </p>
+                    </div>
+                    <div class="flex gap-4 mt-8">
+                        <a href="#" class="cursor-pointer" aria-label="GitHub">
+                            <svg class="w-6 h-6 text-secondary hover:text-primary transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="cursor-pointer" aria-label="Twitter">
+                            <svg class="w-6 h-6 text-secondary hover:text-primary transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="cursor-pointer" aria-label="邮箱">
+                            <svg class="w-6 h-6 text-secondary hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="order-1 md:order-2 flex justify-center">
+                    <div class="relative w-64 h-64 md:w-80 md:h-80">
+                        <div class="absolute inset-0 bg-gradient-to-br from-cta/20 to-primary/20 rounded-3xl transform rotate-3"></div>
+                        <div class="absolute inset-4 bg-surface rounded-2xl shadow-xl flex items-center justify-center">
+                            <span class="font-heading text-8xl text-primary">👨‍💻</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section id="newsletter" class="py-20 bg-primary text-white">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <p class="text-cta font-medium mb-2">订阅更新</p>
+            <h2 class="font-heading text-4xl md:text-5xl font-bold mb-4">
+                获取最新文章
+            </h2>
+            <p class="text-gray-400 mb-8 max-w-lg mx-auto">
+                订阅我的 newsletter，获取最新文章更新通知。也可以关注我的社交媒体获取更多内容。
+            </p>
+            <form class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto" onsubmit="event.preventDefault(); alert('感谢订阅！');">
+                <input 
+                    type="email" 
+                    placeholder="your@email.com" 
+                    class="flex-1 px-6 py-3 rounded-full bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-cta transition-colors"
+                    required
+                >
+                <button 
+                    type="submit"
+                    class="px-8 py-3 bg-cta text-white font-medium rounded-full hover:bg-cta/90 transition-colors cursor-pointer"
+                >
+                    订阅
+                </button>
+            </form>
+            <p class="text-gray-500 text-sm mt-4">
+                已有 128 位读者订阅
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 bg-background border-t border-gray-100">
+        <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p class="text-secondary text-sm">
+                © 2026 小 Eric. All rights reserved.
+            </p>
+            <div class="flex items-center gap-6">
+                <a href="#" class="text-secondary hover:text-primary transition-colors text-sm cursor-pointer">隐私政策</a>
+                <a href="#" class="text-secondary hover:text-primary transition-colors text-sm cursor-pointer">联系方式</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.remove('opacity-0');
+                    entry.target.classList.add('animate-fade-in-up');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('article').forEach(el => {
+            el.classList.add('opacity-0');
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

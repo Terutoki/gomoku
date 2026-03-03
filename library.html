@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智阅图书馆 | 数字阅读新体验</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1',
+                        secondary: '#818CF8',
+                        accent: '#22C55E',
+                        background: '#EEF2FF',
+                        dark: '#312E81',
+                    },
+                    fontFamily: {
+                        display: ['Orbitron', 'Exo 2', 'Noto Sans SC', 'sans-serif'],
+                        body: ['Exo 2', 'Noto Sans SC', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'slide-up': 'slideUp 0.8s ease-out forwards',
+                        'fade-in': 'fadeIn 1s ease-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        :root {
+            --primary: #6366F1;
+            --secondary: #818CF8;
+            --accent: #22C55E;
+            --background: #EEF2FF;
+            --dark: #312E81;
+        }
+        
+        body {
+            font-family: 'Exo 2', 'Noto Sans SC', sans-serif;
+        }
+        
+        .font-display {
+            font-family: 'Orbitron', 'Exo 2', 'Noto Sans SC', sans-serif;
+        }
+        
+        .text-balance {
+            text-wrap: balance;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        
+        .glow {
+            box-shadow: 0 0 60px rgba(99, 102, 241, 0.3);
+        }
+        
+        .glow-accent {
+            box-shadow: 0 0 40px rgba(34, 197, 94, 0.4);
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            .animate-float,
+            .animate-pulse-slow,
+            .animate-slide-up,
+            .animate-fade-in {
+                animation: none;
+            }
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px -12px rgba(99, 102, 241, 0.25);
+        }
+        
+        .btn-glow:hover {
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+        }
+        
+        .btn-accent:hover {
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+        }
+        
+        .mega-text {
+            font-size: clamp(3rem, 10vw, 8rem);
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            line-height: 0.9;
+        }
+        
+        .book-card {
+            aspect-ratio: 3/4;
+        }
+        
+        .book-cover {
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .book-card:hover .book-cover {
+            transform: scale(1.05) rotateY(-5deg);
+        }
+        
+        input:focus, button:focus, a:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body class="bg-background text-dark antialiased overflow-x-hidden">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-card">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 cursor-pointer">
+                <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                </div>
+                <span class="font-display font-bold text-xl">智阅</span>
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#features" class="text-dark/70 hover:text-primary transition-colors cursor-pointer font-medium">功能</a>
+                <a href="#collection" class="text-dark/70 hover:text-primary transition-colors cursor-pointer font-medium">馆藏</a>
+                <a href="#pricing" class="text-dark/70 hover:text-primary transition-colors cursor-pointer font-medium">会员</a>
+                <a href="#" class="text-dark/70 hover:text-primary transition-colors cursor-pointer font-medium">社区</a>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <button class="hidden md:block px-5 py-2.5 text-primary font-semibold hover:bg-primary/10 rounded-full transition-colors cursor-pointer">
+                    登录
+                </button>
+                <button class="px-5 py-2.5 bg-primary text-white font-semibold rounded-full hover:bg-primary/90 transition-all btn-glow cursor-pointer">
+                    免费试用
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center pt-24 relative overflow-hidden">
+        <!-- Background decoration -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-20 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse-slow"></div>
+            <div class="absolute bottom-20 -right-20 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 2s;"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-br from-primary/5 to-accent/5 rounded-full"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-6 py-20 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 text-accent rounded-full text-sm font-semibold mb-6 animate-fade-in">
+                        <span class="w-2 h-2 bg-accent rounded-full animate-pulse"></span>
+                        10万+ 图书资源
+                    </div>
+                    
+                    <h1 class="mega-text mb-8 animate-slide-up">
+                        <span class="text-dark">阅读</span>
+                        <br>
+                        <span class="gradient-text">新纪元</span>
+                    </h1>
+                    
+                    <p class="text-xl md:text-2xl text-dark/60 mb-10 max-w-xl mx-auto lg:mx-0 text-balance animate-slide-up" style="animation-delay: 0.1s;">
+                        探索超过 <span class="text-primary font-bold">100,000</span> 本电子书籍，随时随地开启您的智慧阅读之旅
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-slide-up" style="animation-delay: 0.2s;">
+                        <button class="px-8 py-4 bg-accent text-white font-bold rounded-full text-lg hover:bg-accent/90 transition-all btn-accent cursor-pointer">
+                            开始免费阅读
+                        </button>
+                        <button class="px-8 py-4 border-2 border-dark/20 text-dark font-bold rounded-full text-lg hover:border-primary hover:text-primary transition-all cursor-pointer">
+                            <span class="flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                    <polyline points="22,6 12,13 2,6"/>
+                                </svg>
+                                了解更多
+                            </span>
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center gap-6 mt-10 justify-center lg:justify-start animate-slide-up" style="animation-delay: 0.3s;">
+                        <div class="flex -space-x-3">
+                            <img src="https://i.pravatar.cc/100?img=1" alt="" class="w-10 h-10 rounded-full border-2 border-background">
+                            <img src="https://i.pravatar.cc/100?img=2" alt="" class="w-10 h-10 rounded-full border-2 border-background">
+                            <img src="https://i.pravatar.cc/100?img=3" alt="" class="w-10 h-10 rounded-full border-2 border-background">
+                            <img src="https://i.pravatar.cc/100?img=4" alt="" class="w-10 h-10 rounded-full border-2 border-background">
+                        </div>
+                        <div class="text-left">
+                            <div class="flex gap-1">
+                                <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            </div>
+                            <p class="text-sm text-dark/60">50,000+ 活跃读者</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Hero Image/Book Showcase -->
+                <div class="relative hidden lg:block animate-float">
+                    <div class="relative w-full max-w-md mx-auto">
+                        <div class="absolute inset-0 bg-gradient-to-br from-primary to-accent rounded-3xl blur-2xl opacity-30"></div>
+                        <div class="relative glass-card rounded-3xl p-8 glow">
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="book-card rounded-xl overflow-hidden shadow-lg book-cover cursor-pointer">
+                                    <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=400&fit=crop" alt="Book Cover" class="w-full h-full object-cover">
+                                </div>
+                                <div class="book-card rounded-xl overflow-hidden shadow-lg book-cover cursor-pointer" style="animation-delay: 0.1s;">
+                                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=400&fit=crop" alt="Book Cover" class="w-full h-full object-cover">
+                                </div>
+                                <div class="book-card rounded-xl overflow-hidden shadow-lg book-cover cursor-pointer" style="animation-delay: 0.2s;">
+                                    <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=300&h=400&fit=crop" alt="Book Cover" class="w-full h-full object-cover">
+                                </div>
+                                <div class="book-card rounded-xl overflow-hidden shadow-lg book-cover cursor-pointer" style="animation-delay: 0.3s;">
+                                    <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=300&h=400&fit=crop" alt="Book Cover" class="w-full h-full object-cover">
+                                </div>
+                                <div class="book-card rounded-xl overflow-hidden shadow-lg book-cover cursor-pointer" style="animation-delay: 0.4s;">
+                                    <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=300&h=400&fit=crop" alt="Book Cover" class="w-full h-full object-cover">
+                                </div>
+                                <div class="book-card rounded-xl overflow-hidden shadow-lg book-cover cursor-pointer" style="animation-delay: 0.5s;">
+                                    <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=300&h=400&fit=crop" alt="Book Cover" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16 bg-dark text-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <p class="font-display text-4xl md:text-5xl font-bold text-accent mb-2">100K+</p>
+                    <p class="text-white/60">图书资源</p>
+                </div>
+                <div>
+                    <p class="font-display text-4xl md:text-5xl font-bold text-accent mb-2">50K+</p>
+                    <p class="text-white/60">活跃读者</p>
+                </div>
+                <div>
+                    <p class="font-display text-4xl md:text-5xl font-bold text-accent mb-2">500+</p>
+                    <p class="text-white/60">出版合作</p>
+                </div>
+                <div>
+                    <p class="font-display text-4xl md:text-5xl font-bold text-accent mb-2">4.9</p>
+                    <p class="text-white/60">用户评分</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-24 bg-background">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <p class="text-primary font-semibold mb-4">核心功能</p>
+                <h2 class="font-display text-4xl md:text-5xl font-bold mb-6">重新定义数字阅读</h2>
+                <p class="text-dark/60 text-xl max-w-2xl mx-auto">专为现代读者打造的极致阅读体验</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="glass-card rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3">海量藏书</h3>
+                    <p class="text-dark/60">涵盖文学、科技、商业、艺术等全品类，超过10万本精选电子书</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="glass-card rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-accent/10 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3">智能阅读</h3>
+                    <p class="text-dark/60">AI推荐系统，个性化书架，智能阅读进度同步</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="glass-card rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3">随时随地</h3>
+                    <p class="text-dark/60">多设备同步阅读，离线下载，随时随地畅读好书</p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="glass-card rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-accent/10 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3">有声读物</h3>
+                    <p class="text-dark/60">专业主播朗读，通勤路上也能享受阅读</p>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="glass-card rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3">读者社区</h3>
+                    <p class="text-dark/60">书友交流、读书笔记、书评分享，发现同好</p>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="glass-card rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-accent/10 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3">版权正版</h3>
+                    <p class="text-dark/60">正版授权，品质保证，支持作者创作</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Collection Section -->
+    <section id="collection" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                <div>
+                    <p class="text-primary font-semibold mb-4">热门推荐</p>
+                    <h2 class="font-display text-4xl md:text-5xl font-bold">精选馆藏</h2>
+                </div>
+                <div class="flex gap-3 mt-6 md:mt-0">
+                    <button class="px-5 py-2.5 bg-primary text-white font-semibold rounded-full text-sm cursor-pointer">全部</button>
+                    <button class="px-5 py-2.5 bg-background text-dark font-semibold rounded-full text-sm hover:bg-primary/10 transition-colors cursor-pointer">文学</button>
+                    <button class="px-5 py-2.5 bg-background text-dark font-semibold rounded-full text-sm hover:bg-primary/10 transition-colors cursor-pointer">科技</button>
+                    <button class="px-5 py-2.5 bg-background text-dark font-semibold rounded-full text-sm hover:bg-primary/10 transition-colors cursor-pointer">商业</button>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                <!-- Book Card 1 -->
+                <div class="card-hover cursor-pointer group">
+                    <div class="book-card rounded-xl overflow-hidden shadow-lg mb-3 relative">
+                        <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=400&fit=crop" alt="Book" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <button class="w-12 h-12 bg-white rounded-full flex items-center justify-center cursor-pointer">
+                                <svg class="w-5 h-5 text-primary ml-1" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-dark truncate">思考，快与慢</h4>
+                    <p class="text-sm text-dark/60">丹尼尔·卡尼曼</p>
+                    <div class="flex items-center gap-1 mt-1">
+                        <svg class="w-3 h-3 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <span class="text-xs text-dark/60">4.8</span>
+                    </div>
+                </div>
+                
+                <!-- Book Card 2 -->
+                <div class="card-hover cursor-pointer group">
+                    <div class="book-card rounded-xl overflow-hidden shadow-lg mb-3 relative">
+                        <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=400&fit=crop" alt="Book" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <button class="w-12 h-12 bg-white rounded-full flex items-center justify-center cursor-pointer">
+                                <svg class="w-5 h-5 text-primary ml-1" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-dark truncate">人类简史</h4>
+                    <p class="text-sm text-dark/60">尤瓦尔·赫拉利</p>
+                    <div class="flex items-center gap-1 mt-1">
+                        <svg class="w-3 h-3 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <span class="text-xs text-dark/60">4.9</span>
+                    </div>
+                </div>
+                
+                <!-- Book Card 3 -->
+                <div class="card-hover cursor-pointer group">
+                    <div class="book-card rounded-xl overflow-hidden shadow-lg mb-3 relative">
+                        <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=300&h=400&fit=crop" alt="Book" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <button class="w-12 h-12 bg-white rounded-full flex items-center justify-center cursor-pointer">
+                                <svg class="w-5 h-5 text-primary ml-1" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-dark truncate">百年孤独</h4>
+                    <p class="text-sm text-dark/60">加西亚·马尔克斯</p>
+                    <div class="flex items-center gap-1 mt-1">
+                        <svg class="w-3 h-3 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <span class="text-xs text-dark/60">4.7</span>
+                    </div>
+                </div>
+                
+                <!-- Book Card 4 -->
+                <div class="card-hover cursor-pointer group">
+                    <div class="book-card rounded-xl overflow-hidden shadow-lg mb-3 relative">
+                        <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=300&h=400&fit=crop" alt="Book" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <button class="w-12 h-12 bg-white rounded-full flex items-center justify-center cursor-pointer">
+                                <svg class="w-5 h-5 text-primary ml-1" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-dark truncate">浪潮之巅</h4>
+                    <p class="text-sm text-dark/60">吴军</p>
+                    <div class="flex items-center gap-1 mt-1">
+                        <svg class="w-3 h-3 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <span class="text-xs text-dark/60">4.6</span>
+                    </div>
+                </div>
+                
+                <!-- Book Card 5 -->
+                <div class="card-hover cursor-pointer group">
+                    <div class="book-card rounded-xl overflow-hidden shadow-lg mb-3 relative">
+                        <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=300&h=400&fit=crop" alt="Book" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <button class="w-12 h-12 bg-white rounded-full flex items-center justify-center cursor-pointer">
+                                <svg class="w-5 h-5 text-primary ml-1" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-dark truncate">刻意练习</h4>
+                    <p class="text-sm text-dark/60">安德斯·艾利克森</p>
+                    <div class="flex items-center gap-1 mt-1">
+                        <svg class="w-3 h-3 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <span class="text-xs text-dark/60">4.8</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <button class="px-8 py-4 border-2 border-primary text-primary font-bold rounded-full hover:bg-primary hover:text-white transition-all cursor-pointer">
+                    查看全部书籍
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-24 bg-dark text-white relative overflow-hidden">
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-96 h-96 bg-accent/20 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <p class="text-accent font-semibold mb-4">会员定价</p>
+                <h2 class="font-display text-4xl md:text-5xl font-bold mb-6">选择您的阅读计划</h2>
+                <p class="text-white/60 text-xl max-w-2xl mx-auto">灵活订阅，随时取消</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Free Plan -->
+                <div class="glass-card bg-white/5 rounded-2xl p-8">
+                    <h3 class="font-display text-xl font-bold mb-2">免费版</h3>
+                    <p class="text-white/60 mb-6">适合轻度读者</p>
+                    <p class="font-display text-4xl font-bold mb-6">¥0<span class="text-lg font-normal text-white/60">/月</span></p>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center gap-3 text-white/80">
+                            <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            每月 5 本免费阅读
+                        </li>
+                        <li class="flex items-center gap-3 text-white/80">
+                            <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                           基础阅读功能
+                        </li>
+                        <li class="flex items-center gap-3 text-white/80">
+                            <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                           广告展示
+                        </li>
+                    </ul>
+                    <button class="w-full py-3 border-2 border-white/30 text-white font-bold rounded-full hover:bg-white/10 transition-colors cursor-pointer">
+                        免费开始
+                    </button>
+                </div>
+                
+                <!-- Pro Plan -->
+                <div class="glass-card bg-primary/20 rounded-2xl p-8 border-2 border-primary glow relative">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-accent text-white text-sm font-bold rounded-full">
+                        最受欢迎
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-2">专业版</h3>
+                    <p class="text-white/60 mb-6">适合重度读者</p>
+                    <p class="font-display text-4xl font-bold mb-6">¥29<span class="text-lg font-normal text-white/60">/月</span></p>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center gap-3 text-white">
+                            <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            无限阅读
+                        </li>
+                        <li class="flex items-center gap-3 text-white">
+                            <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            离线下载
+                        </li>
+                        <li class="flex items-center gap-3 text-white">
+                            <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            无广告
+                        </li>
+                        <li class="flex items-center gap-3 text-white">
+                            <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            有声读物
+                        </li>
+                    </ul>
+                    <button class="w-full py-3 bg-accent text-white font-bold rounded-full hover:bg-accent/90 transition-all btn-accent cursor-pointer">
+                        立即开通
+                    </button>
+                </div>
+                
+                <!-- Enterprise Plan -->
+                <div class="glass-card bg-white/5 rounded-2xl p-8">
+                    <h3 class="font-display text-xl font-bold mb-2">企业版</h3>
+                    <p class="text-white/60 mb-6">团队/机构</p>
+                    <p class="font-display text-4xl font-bold mb-6">¥199<span class="text-lg font-normal text-white/60">/月</span></p>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center gap-3 text-white/80">
+                            <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            50个账号
+                        </li>
+                        <li class="flex items-center gap-3 text-white/80">
+                            <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            管理后台
+                        </li>
+                        <li class="flex items-center gap-3 text-white/80">
+                            <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            阅读数据统计
+                        </li>
+                        <li class="flex items-center gap-3 text-white/80">
+                            <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            优先客服支持
+                        </li>
+                    </ul>
+                    <button class="w-full py-3 border-2 border-white/30 text-white font-bold rounded-full hover:bg-white/10 transition-colors cursor-pointer">
+                        联系我们
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24 bg-background relative overflow-hidden">
+        <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
+            <h2 class="font-display text-4xl md:text-6xl font-bold mb-6">
+                开启您的<span class="gradient-text">阅读之旅</span>
+            </h2>
+            <p class="text-dark/60 text-xl mb-10 max-w-2xl mx-auto">
+                加入50,000+读者的行列，发现阅读的乐趣
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="px-8 py-4 bg-accent text-white font-bold rounded-full text-lg hover:bg-accent/90 transition-all btn-accent cursor-pointer">
+                    免费试用 7 天
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-white border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <a href="#" class="flex items-center gap-3 cursor-pointer mb-4">
+                        <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                        </div>
+                        <span class="font-display font-bold text-xl">智阅</span>
+                    </a>
+                    <p class="text-dark/60 text-sm">重新定义数字阅读，让阅读成为一种生活方式。</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">产品</h4>
+                    <ul class="space-y-2 text-dark/60">
+                        <li><a href="#" class="hover:text-primary transition-colors cursor-pointer">功能介绍</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors cursor-pointer">会员定价</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors cursor-pointer">下载App</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">公司</h4>
+                    <ul class="space-y-2 text-dark/60">
+                        <li><a href="#" class="hover:text-primary transition-colors cursor-pointer">关于我们</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors cursor-pointer">博客</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors cursor-pointer">加入我们</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">支持</h4>
+                    <ul class="space-y-2 text-dark/60">
+                        <li><a href="#" class="hover:text-primary transition-colors cursor-pointer">帮助中心</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors cursor-pointer">联系我们</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors cursor-pointer">隐私政策</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pt-8 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4">
+                <p class="text-dark/60 text-sm">© 2026 智阅图书馆. All rights reserved.</p>
+                <div class="flex items-center gap-4">
+                    <a href="#" class="cursor-pointer" aria-label="WeChat">
+                        <svg class="w-5 h-5 text-dark/60 hover:text-primary transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 01.213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 00.167-.054l1.903-1.114a.864.864 0 01.717-.098 10.16 10.16 0 002.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178A1.17 1.17 0 014.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178 1.17 1.17 0 01-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.722.722 0 01.598.082l1.584.926a.272.272 0 00 .14.045c.134 0 .24-.11.24-.245 0-.06-.023-.12-.038-.177l-.327-1.233a.582.582 0 01-.023-.156.49.49 0 01.201-.398C23.024 18.48 24 16.82 24 14.98c0-3.21-2.931-5.837-6.656-6.088V8.89c-.135-.01-.269-.03-.406-.03zm-2.53 3.274c.535 0 .969.44.969.982a.976.976 0 01-.969.983.976.976 0 01-.969-.983c0-.542.434-.982.97-.982zm4.844 0c.535 0 .969.44.969.982a.976.976 0 01-.969.983.976.976 0 01-.969-.983c0-.542.434-.982.969-.982z"/></svg>
+                    </a>
+                    <a href="#" class="cursor-pointer" aria-label="Weibo">
+                        <svg class="w-5 h-5 text-dark/60 hover:text-primary transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M10.098 20.323c-3.977.391-7.414-1.406-7.672-4.02-.259-2.609 2.759-5.047 6.74-5.441 3.979-.394 7.413 1.404 7.671 4.018.259 2.6-2.759 5.049-6.739 5.443zM9.05 17.219c-.384.616-1.208.884-1.829.602-.612-.279-.793-.991-.406-1.593.379-.595 1.176-.861 1.793-.601.622.263.82.972.442 1.592zm1.27-1.627c-.141.237-.449.353-.689.253-.236-.09-.313-.361-.177-.586.138-.227.436-.346.672-.24.239.09.315.36.194.573zm.176-2.719c-1.893-.493-4.033.45-4.857 2.118-.836 1.704-.026 3.591 1.886 4.21 1.983.64 4.318-.341 5.132-2.179.8-1.793-.201-3.642-2.161-4.149zm7.563-1.224c-.346-.105-.581-.178-.402-.641.388-1.004.428-1.868.003-2.483-.797-1.151-2.976-1.09-5.465-.028 0 0-.782.345-.575-.279.381-1.236.324-2.27-.269-2.717-.883-.666-2.866.115-4.876 1.94-2.344 2.126-2.626 5.335-.688 7.225 1.896 1.848 5.347 1.641 7.269-.261 1.502-1.484 1.772-3.53 1.013-4.756zm2.186-5.669c-.596-.645-1.49-1.022-2.477-.943-.529.045-.953.279-1.228.674-.552.794-.424 1.882.316 2.651.706.762 1.849 1.026 2.669.6.177-.093.34-.212.486-.354.218-.254.283-.512.224-.699-.024-.059-.064-.105-.107-.14l-.001-.001c-.058-.067-.141-.102-.227-.102z"/></svg>
+                    </a>
+                    <a href="#" class="cursor-pointer" aria-label="Twitter">
+                        <svg class="w-5 h-5 text-dark/60 hover:text-primary transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
